@@ -24,7 +24,7 @@ ImageCropper是纯swift编写的库。使用它可以容易地将给定图片中
 ```ruby
 
 # CocoaPods
-pod "ImageCropper"
+pod 'ImageCropperKit'
 
 # Carthage
 github "cp110/ImageCropper"
