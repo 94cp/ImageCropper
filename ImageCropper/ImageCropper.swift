@@ -64,17 +64,18 @@ public extension ImageCropper where T: CGImage {
     ///
     /// - Parameters:
     ///   - type: 裁剪类型
+    ///   - padding: 裁剪扩展内边距，默认：zero
     ///   - completion: 结果回调
-    func crop(type: DetectionType, completion: @escaping (ImageDetectResult<CGImage>) -> Void) {
+    func crop(type: DetectionType, padding: UIEdgeInsets = .zero, completion: @escaping (ImageDetectResult<CGImage>) -> Void) {
         if #available(iOS 11.0, *) {
-            visionCrop(type: type, completion: completion)
+            visionCrop(type: type, padding: padding, completion: completion)
         } else {
-            coreImageCrop(type: type, completion: completion)
+            coreImageCrop(type: type, padding: padding, completion: completion)
         }
     }
     
     @available(iOS 11.0, *)
-    private func visionCrop(type: DetectionType, completion: @escaping (ImageDetectResult<CGImage>) -> Void) {
+    private func visionCrop(type: DetectionType, padding: UIEdgeInsets, completion: @escaping (ImageDetectResult<CGImage>) -> Void) {
         // 设置回调
         let completionHandle: VNRequestCompletionHandler = { request, error in
             guard error == nil else {
@@ -84,7 +85,7 @@ public extension ImageCropper where T: CGImage {
             
             let cropImages = request.results?.map({ result -> CGImage? in
                 guard let detectedObj = result as? VNDetectedObjectObservation else { return nil }
-                let image = self.cropImage(object: detectedObj)
+                let image = self.cropImage(object: detectedObj, padding: padding)
                 return image
             }).compactMap { $0 }
             
@@ -120,7 +121,7 @@ public extension ImageCropper where T: CGImage {
         }
     }
     
-    private func coreImageCrop(type: DetectionType, completion: @escaping (ImageDetectResult<CGImage>) -> Void) {
+    private func coreImageCrop(type: DetectionType, padding: UIEdgeInsets, completion: @escaping (ImageDetectResult<CGImage>) -> Void) {
         let ciImage = CIImage(cgImage: detectable)
         // 识别结果精度
         let accuracy = [CIDetectorAccuracy: CIDetectorAccuracyHigh]
@@ -135,7 +136,7 @@ public extension ImageCropper where T: CGImage {
         
         let cropImages = results?.map({ (result) -> CGImage? in
             guard let detectedObj = result as? CIFaceFeature else { return nil }
-            let image = self.cropImage(bounds: detectedObj.bounds.applying(transform), ciImageSize: ciImageSize)
+            let image = self.cropImage(detectedBounds: detectedObj.bounds.applying(transform), ciImageSize: ciImageSize, padding: padding)
             return image
         }).compactMap { $0 }
         
@@ -162,30 +163,33 @@ public extension ImageCropper where T: CGImage {
     
     /// Vision 图片裁剪方法
     @available(iOS 11.0, *)
-    private func cropImage(object: VNDetectedObjectObservation) -> CGImage? {
+    private func cropImage(object: VNDetectedObjectObservation, padding: UIEdgeInsets) -> CGImage? {
         let width = object.boundingBox.width * CGFloat(detectable.width)
         let height = object.boundingBox.height * CGFloat(detectable.height)
         let x = object.boundingBox.origin.x * CGFloat(detectable.width)
         let y = (1 - object.boundingBox.origin.y) * CGFloat(detectable.height) - height
         
-        let croppingRect = CGRect(x: x, y: y, width: width, height: height)
+        let croppingRect = CGRect(x: x - padding.left, y: y - padding.top, width: width + (padding.left + padding.right), height: height + (padding.top + padding.bottom))
         
         let image = self.detectable.cropping(to: croppingRect)
         return image
     }
     
     /// CoreImage 图片裁剪方法
-    private func cropImage(bounds: CGRect, ciImageSize: CGSize) -> CGImage? {
-        var croppingRect = bounds
+    private func cropImage(detectedBounds: CGRect, ciImageSize: CGSize, padding: UIEdgeInsets) -> CGImage? {
+        var croppingRect = detectedBounds
         
         let scaleX = CGFloat(detectable.width) / ciImageSize.width
         let scaleY = CGFloat(detectable.height) / ciImageSize.height
-        let offsetX = (CGFloat(detectable.width) - ciImageSize.width * scaleX) / 2
-        let offsetY = (CGFloat(detectable.height) - ciImageSize.height * scaleY) / 2
+        let offsetX = (CGFloat(detectable.width) - ciImageSize.width * scaleX) * 0.5
+        let offsetY = (CGFloat(detectable.height) - ciImageSize.height * scaleY) * 0.5
 
         croppingRect = croppingRect.applying(CGAffineTransform(scaleX: scaleX, y: scaleY))
-        croppingRect.origin.x += offsetX
-        croppingRect.origin.y += offsetY
+        
+        croppingRect.origin.x += offsetX - padding.left
+        croppingRect.origin.y += offsetY - padding.top
+        croppingRect.size.width += (padding.left + padding.right)
+        croppingRect.size.height += (padding.top + padding.bottom)
 
         let image = self.detectable.cropping(to: croppingRect)
         return image
@@ -199,9 +203,10 @@ public extension ImageCropper where T: UIImage {
     ///
     /// - Parameters:
     ///   - type: 裁剪类型
+    ///   - padding: 裁剪扩展内边距，默认：zero
     ///   - completion: 结果回调
-    func crop(type: DetectionType, completion: @escaping (ImageDetectResult<UIImage>) -> Void) {
-        detectable.cgImage!.detector.crop(type: type) { result in
+    func crop(type: DetectionType, padding: UIEdgeInsets = .zero, completion: @escaping (ImageDetectResult<UIImage>) -> Void) {
+        detectable.cgImage!.detector.crop(type: type, padding: padding) { result in
             switch result {
             case .success(let cgImages):
                 let faces = cgImages.map { cgImage -> UIImage in

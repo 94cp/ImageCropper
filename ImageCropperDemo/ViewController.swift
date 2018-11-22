@@ -36,19 +36,15 @@ class ViewController: UIViewController {
         guard let image = imageView.image else { return }
         activityIndicator.startAnimating()
         DispatchQueue.global().async {
-            // `type` in this method can be face, barcode or text
-            image.detector.crop(type: .face) { result in
+            image.detector.crop(type: .face, padding: UIEdgeInsets(top: 40, left: 40, bottom: 40, right: 40)) { result in
                 DispatchQueue.main.async { [weak self] in
                     switch result {
                     case .success(let croppedImages):
-                        // When the `Vision` successfully find type of object you set and successfuly crops it.
                         self?.images = croppedImages
                         self?.collectionView.reloadData()
                     case .notFound:
-                        // When the image doesn't contain any type of object you did set, `result` will be `.notFound`.
                         print("Not Found")
                     case .failure(let error):
-                        // When the any error occured, `result` will be `failure`.
                         print(error.localizedDescription)
                     }
                     self?.activityIndicator.stopAnimating()
