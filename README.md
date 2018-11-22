@@ -11,8 +11,9 @@ ImageCropper是纯swift编写的库。使用它可以容易地将给定图片中
 
 ## Example
 <br>
-<a href="url"><img src="https://github.com/cp110/ImageCropper/blob/master/Screenshots/1.png" align="top" height="550" width="275" ></a>
-<a href="url"><img src="https://github.com/cp110/ImageCropper/blob/master/Screenshots/2.png" align="top" height="550" width="275" ></a>
+<a href="url"><img src="https://github.com/cp110/ImageCropper/blob/master/Screenshots/1.png" align="top" height="406" width="187.5" ></a>
+
+<a href="url"><img src="https://github.com/cp110/ImageCropper/blob/master/Screenshots/2.png" align="top" height="406" width="187.5" ></a>
 <br>
 
 ## Requirements
