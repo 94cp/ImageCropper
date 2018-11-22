@@ -10,10 +10,10 @@ ImageCropper是纯swift编写的库。使用它可以容易地将给定图片中
 - [x] Detect face, text, barcode or rectangle
 
 ## Example
-<br>
-<a href="url"><img src="https://github.com/cp110/ImageCropper/blob/master/Screenshots/1.png" align="top" height="550" width="275" ></a>
-<a href="url"><img src="https://github.com/cp110/ImageCropper/blob/master/Screenshots/2.png" align="top" height="550" width="275" ></a>
-<br>
+
+| Normal Crop | Padding Crop |
+| :-: | :-: |
+| <a href="url"><img src="https://github.com/cp110/ImageCropper/blob/master/Screenshots/1.png" align="top" height="406" width="187.5" ></a> | <a href="url"><img src="https://github.com/cp110/ImageCropper/blob/master/Screenshots/2.png" align="top" height="406" width="187.5" ></a> |
 
 ## Requirements
 - iOS 10.0+
@@ -44,9 +44,10 @@ Crop faces from your image (UIImage or CGImage) in the easy way.
 // `type`：裁剪类型（人脸、条形码/二维码、文本、方框）
 // `paddind`：裁剪出来的图片的内边距（可以使裁剪图片更完整些），默认 .zero
 let image = UIImage(named: "image name")
-image.detector.crop(type: .face, padding: UIEdgeInsets(top: 40, left: 40, bottom: 40, right: 40)) { [weak self] result in
+// let image = UIImage(named: "image name")?.cgImage
+image?.detector.crop(type: .face, padding: UIEdgeInsets(top: 40, left: 40, bottom: 40, right: 40)) { [weak self] result in
     switch result {
-        case .success(let croppedImages):
+        case .success(let cropImageResults): // cropImageResults: [(image: T, frame: CGRect)]
             // When the `Vision` successfully find type of object you set and successfuly crops it.
             print("Found")
         case .notFound:
