@@ -7,7 +7,7 @@
 #
 
 Pod::Spec.new do |s|
-  s.name             = "ImageCropper"
+  s.name             = "ImageCropperKit"
   s.version          = "1.0.0"
   s.summary          = "Detect and crop faces, barcodes, texts or rectangle in your image.（图片裁剪：支持人脸、二维码/条形码、文本、方框）"
   s.homepage         = "https://github.com/cp110/ImageCropper"
