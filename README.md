@@ -33,7 +33,7 @@ github "cp110/ImageCropper"
 
 ## Usage
 
-Crop your (UIImage or CGImage)
+Crop faces from your image (UIImage or CGImage) in the easy way.
 
 裁剪原图是 UIImage 或 CGImage
 
@@ -43,6 +43,7 @@ Crop your (UIImage or CGImage)
 // `padding` is the inside margin of the cropped image. default is .zero
 // `type`：裁剪类型（人脸、条形码/二维码、文本、方框）
 // `paddind`：裁剪出来的图片的内边距（可以使裁剪图片更完整些），默认 .zero
+let image = UIImage(named: "image name")
 image.detector.crop(type: .face, padding: UIEdgeInsets(top: 40, left: 40, bottom: 40, right: 40)) { [weak self] result in
     switch result {
         case .success(let croppedImages):
@@ -58,10 +59,14 @@ image.detector.crop(type: .face, padding: UIEdgeInsets(top: 40, left: 40, bottom
 }
 ```
 
+## Related Projects
+
+- [FaceCropper](https://github.com/KimDarren/FaceCropper)
+
 ## Author
 
 Arthur [cp110](1107223894@qq.com)
 
 ## License
 
-ImageCropper is available under the MIT license. See the LICENSE file for more info.
+ImageCropper is available under the MIT license. See the [LICENSE](LICENSE) file for more info.
