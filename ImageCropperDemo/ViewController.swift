@@ -39,8 +39,8 @@ class ViewController: UIViewController {
             image.detector.crop(type: .face, padding: UIEdgeInsets(top: 40, left: 40, bottom: 40, right: 40)) { result in
                 DispatchQueue.main.async { [weak self] in
                     switch result {
-                    case .success(let croppedImages):
-                        self?.images = croppedImages
+                    case .success(let cropImageResults):
+                        self?.images = cropImageResults.map { return $0.image }
                         self?.collectionView.reloadData()
                     case .notFound:
                         print("Not Found")
