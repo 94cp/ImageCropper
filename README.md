@@ -62,6 +62,7 @@ image.detector.crop(type: .face, padding: UIEdgeInsets(top: 40, left: 40, bottom
 ## Related Projects
 
 - [FaceCropper](https://github.com/KimDarren/FaceCropper)
+- [ImageDetect](https://github.com/Feghal/ImageDetect)
 
 ## Author
 
