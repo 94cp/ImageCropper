@@ -135,8 +135,7 @@ public extension ImageCropper where T: CGImage {
         transform = transform.translatedBy(x: 0, y: -ciImageSize.height)
         
         let cropImageResults = results?.map({ (result) -> (image: CGImage, frame: CGRect)? in
-            guard let detectedObj = result as? CIFaceFeature else { return nil }
-            let cropImageResult = self.cropImage(detectedBounds: detectedObj.bounds.applying(transform), ciImageSize: ciImageSize, padding: padding)
+            let cropImageResult = self.cropImage(detectedBounds: result.bounds.applying(transform), ciImageSize: ciImageSize, padding: padding)
             return cropImageResult
         }).compactMap { $0 }
         
