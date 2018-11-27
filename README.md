@@ -67,7 +67,7 @@ image?.detector.crop(type: .face, padding: UIEdgeInsets(top: 40, left: 40, botto
 
 ## Author
 
-Arthur [cp110](1107223894@qq.com)
+Arthur cp110：1107223894@qq.com
 
 ## License
 
