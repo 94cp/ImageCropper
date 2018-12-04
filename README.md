@@ -50,10 +50,10 @@ image?.detector.crop(type: .face, padding: UIEdgeInsets(top: 40, left: 40, botto
         case .success(let cropImageResults): // cropImageResults: [(image: T, frame: CGRect)]
             // When the `Vision` successfully find type of object you set and successfuly crops it.
             print("Found")
-        case .notFound:
+        case .notFound(let image, let frame):// image: original image （原图）
             // When the image doesn't contain any type of object you did set, `result` will be `.notFound`.
             print("Not Found")
-        case .failure(let error):
+        case .failure(let image, let frame, let error): // image: original image （原图）
             // When the any error occured, `result` will be `failure`.
             print(error.localizedDescription)
         }
