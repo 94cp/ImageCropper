@@ -42,9 +42,13 @@ class ViewController: UIViewController {
                     case .success(let cropImageResults):
                         self?.images = cropImageResults.map { return $0.image }
                         self?.collectionView.reloadData()
-                    case .notFound:
+                    case .notFound(let image, _):
+                        self?.images = [image]
+                        self?.collectionView.reloadData()
                         print("Not Found")
-                    case .failure(let error):
+                    case .failure(let image, _, let error):
+                        self?.images = [image]
+                        self?.collectionView.reloadData()
                         print(error.localizedDescription)
                     }
                     self?.activityIndicator.stopAnimating()

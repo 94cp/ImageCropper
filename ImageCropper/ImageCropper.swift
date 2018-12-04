@@ -39,8 +39,8 @@ public enum DetectionType {
 /// - failure: 失败
 public enum ImageCropResult<T> {
     case success([(image: T, frame: CGRect)])
-    case notFound
-    case failure(Error)
+    case notFound(image: T, frame: CGRect)
+    case failure(image: T, frame: CGRect, error: Error)
 }
 
 /// 图像裁剪工具类
@@ -79,7 +79,7 @@ public extension ImageCropper where T: CGImage {
         // 设置回调
         let completionHandle: VNRequestCompletionHandler = { request, error in
             guard error == nil else {
-                completion(.failure(error!))
+                completion(.failure(image: self.detectable, frame: CGRect(x: 0, y: 0, width: self.detectable.width, height: self.detectable.height), error: error!))
                 return
             }
             
@@ -90,7 +90,7 @@ public extension ImageCropper where T: CGImage {
             }).compactMap { $0 }
             
             guard let result = cropImageResults, result.count > 0 else {
-                completion(.notFound)
+                completion(.notFound(image: self.detectable, frame: CGRect(x: 0, y: 0, width: self.detectable.width, height: self.detectable.height)))
                 return
             }
             
@@ -103,7 +103,7 @@ public extension ImageCropper where T: CGImage {
         do {
             try VNImageRequestHandler(cgImage: detectable, options: [:]).perform([req])
         } catch let error {
-            completion(.failure(error))
+            completion(.failure(image: detectable, frame: CGRect(x: 0, y: 0, width: self.detectable.width, height: self.detectable.height), error: error))
         }
     }
     
@@ -140,7 +140,7 @@ public extension ImageCropper where T: CGImage {
         }).compactMap { $0 }
         
         guard let result = cropImageResults, result.count > 0 else {
-            completion(.notFound)
+            completion(.notFound(image: detectable, frame: CGRect(x: 0, y: 0, width: self.detectable.width, height: self.detectable.height)))
             return
         }
         
@@ -212,10 +212,10 @@ public extension ImageCropper where T: UIImage {
             case .success(let cropImageResults):
                 let results = cropImageResults.map { return (image: UIImage(cgImage: $0.image), frame: $0.frame) }
                 completion(.success(results))
-            case .notFound:
-                completion(.notFound)
-            case .failure(let error):
-                completion(.failure(error))
+            case .notFound(_, let frame):
+                completion(.notFound(image: self.detectable, frame: frame))
+            case .failure(_, let frame, let error):
+                completion(.failure(image: self.detectable, frame: frame, error: error))
             }
         }
     }
